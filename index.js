@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         下载淘宝商品图
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  try to take over the world!
 // @author       You
 // @match        https://item.taobao.com/item.htm*
@@ -35,7 +35,7 @@
             color: rgb(25, 118, 210);
         }
     `
-    GM_addStyle(buttonStyle) 
+    GM_addStyle(buttonStyle)
 
     let DIV = document.createElement('div')
     DIV.id = "downloadBtn"
