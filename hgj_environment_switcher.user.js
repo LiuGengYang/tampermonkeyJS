@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HGJ环境切换器
 // @namespace    http://tampermonkey.net/
-// @version      0.5.0
+// @version      0.5.1
 // @description  在eyun.hgj.com、smartai.hgj.com和login.hgj.com网站上添加环境切换按钮，支持账号密码管理和跨环境数据同步，自动填充功能
 // @author       LiuGengYang
 // @match        *://eyun.hgj.com/*
