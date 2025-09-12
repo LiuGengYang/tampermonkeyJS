@@ -10,8 +10,8 @@
 // @grant        GM_deleteValue
 // @grant        GM_addValueChangeListener
 // @grant        GM_cookie
-// @downloadURL  https://raw.githubusercontent.com/LiuGengYang/tampermonkeyJS/main/hgj_environment_switcher.user.js
-// @updateURL    https://raw.githubusercontent.com/LiuGengYang/tampermonkeyJS/main/hgj_environment_switcher.user.js
+// @downloadURL  https://github.com/LiuGengYang/tampermonkeyJS/raw/refs/heads/main/hgj_environment_switcher.user.js
+// @updateURL    https://github.com/LiuGengYang/tampermonkeyJS/raw/refs/heads/main/hgj_environment_switcher.user.js
 // ==/UserScript==
 (function() {
     'use strict';
