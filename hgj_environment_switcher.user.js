@@ -17,7 +17,7 @@
     'use strict';
     
     // 调试控制标识 - 设置为 false 可关闭所有调试输出
-    const DEBUG_ENABLED = true;
+    const DEBUG_ENABLED = false;
     
     // 封装的日志函数
     function debugLog(...args) {
