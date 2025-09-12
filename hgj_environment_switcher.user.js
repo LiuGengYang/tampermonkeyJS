@@ -3,8 +3,20 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.5.0
 // @description  在eyun.hgj.com、smartai.hgj.com和login.hgj.com网站上添加环境切换按钮，支持账号密码管理和跨环境数据同步，自动填充功能
-// @author       AI助手
-// @match        *://*.hgj.com/*
+// @author       LiuGengYang
+// @match        *://eyun.hgj.com/*
+// @match        *://smartai.hgj.com/*
+// @match        *://login.hgj.com/*
+// @include      https://eyun.hgj.com/*
+// @include      https://dev-eyun.hgj.com/*
+// @include      https://beta-eyun.hgj.com/*
+// @include      https://smartai.hgj.com/*
+// @include      https://dev-smartai.hgj.com/*
+// @include      https://beta-smartai.hgj.com/*
+// @include      https://login.hgj.com/*
+// @include      https://dev-login.hgj.com/*
+// @include      https://beta-login.hgj.com/*
+// @grant        unsafeWindow
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_deleteValue
@@ -12,6 +24,7 @@
 // @grant        GM_cookie
 // @downloadURL  https://raw.githubusercontent.com/LiuGengYang/tampermonkeyJS/refs/heads/main/hgj_environment_switcher.user.js
 // @updateURL    https://raw.githubusercontent.com/LiuGengYang/tampermonkeyJS/refs/heads/main/hgj_environment_switcher.user.js
+// @run-at       document-body
 // ==/UserScript==
 (function() {
     'use strict';
