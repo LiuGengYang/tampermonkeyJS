@@ -12,4 +12,5 @@
 ### 2. 安装脚本
 | GitHub 源 |
 | --- |
-| [安装](https://github.com/LiuGengYang/tampermonkeyJS/raw/refs/heads/main/hgj_environment_switcher.user.js) |
+| [安装](https://raw.githubusercontent.com/LiuGengYang/tampermonkeyJS/refs/heads/main/hgj_environment_switcher.user.js) |
+
