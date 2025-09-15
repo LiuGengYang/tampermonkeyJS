@@ -1,0 +1,29 @@
+## Docs: https://prettier.io/docs/en/options.html
+## Configuration Schema: http://json.schemastore.org/prettierrc
+
+# 句尾分号
+semi: false
+# 字符串单引号
+singleQuote: true
+# Tab插入制表符
+useTabs: false
+# 缩进长度
+tabWidth: 4
+# 箭头函数参数括号
+arrowParens: "avoid"
+# 尾逗号
+trailingComma: "none"
+# 对象字面量内两边空格
+bracketSpacing: true
+# html中`>`的位置
+bracketSameLine: false
+# 应用.editorconfig中的部分配置
+# useEditorConfig: true
+
+# 覆盖规则
+overrides:
+    - files:
+          - "*.yml"
+      options:
+          singleQuote: false
+          # tabWidth: 2
