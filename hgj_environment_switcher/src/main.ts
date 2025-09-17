@@ -1,11 +1,36 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import 'virtual:uno.css'
+import './styles/isolation.css'
+import 'lu2/theme/edge/css/common/ui.css'
+import { isInIframe } from './utils/utils'
 
-createApp(App).mount(
-    (() => {
-        const app = document.createElement('div')
-        document.body.appendChild(app)
-        return app
-    })()
-)
+// 确保只挂载一次，且不在 iframe 中
+if (!isInIframe() && !document.getElementById('hgj-env-switcher-root')) {
+    // 创建一个独立的容器，避免影响页面布局
+    const container = document.createElement('div')
+    container.id = 'hgj-env-switcher-root'
+    // 设置容器样式，确保不影响页面布局
+    container.style.cssText = `
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    pointer-events: none !important;
+    z-index: 999999 !important;
+    overflow: visible !important;
+`
+
+    // 添加一个样式隔离的包装器
+    const wrapper = document.createElement('div')
+    wrapper.className = 'hgj-env-switcher-wrapper'
+    wrapper.style.cssText = `
+    position: relative !important;
+    pointer-events: auto !important;
+`
+
+    container.appendChild(wrapper)
+    document.body.appendChild(container)
+
+    createApp(App).mount(wrapper)
+}

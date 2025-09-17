@@ -1,19 +1,17 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import monkey, { cdn } from 'vite-plugin-monkey'
-import UnoCSS from 'unocss/vite'
-
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
     plugins: [
         vue(),
-        UnoCSS(),
         monkey({
             entry: 'src/main.ts',
             userscript: {
                 icon: 'https://vitejs.dev/logo.svg',
                 namespace: 'npm/vite-plugin-monkey',
-                match: ['*://*/*']
+                // match: ['*://*/*']
+                match: ['https://l-ui.com/*']
             },
             build: {
                 externalGlobals:

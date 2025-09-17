@@ -1,0 +1,74 @@
+/* 样式隔离 - 防止影响页面默认样式 */
+
+/* 创建独立的样式作用域，只重置必要的属性 */
+.hgj-env-switcher-wrapper {
+    /* 创建独立的样式作用域 */
+    isolation: isolate !important;
+    contain: layout style !important;
+
+    /* 确保不影响页面布局 */
+    position: relative !important;
+    z-index: 999999 !important;
+
+    /* 确保有正确的字体，但不强制重置 */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        'Helvetica Neue', Arial, sans-serif;
+}
+
+/* 只重置必要的盒模型属性 */
+.hgj-env-switcher-wrapper *,
+.hgj-env-switcher-wrapper *::before,
+.hgj-env-switcher-wrapper *::after {
+    box-sizing: border-box !important;
+}
+
+/* 确保我们的组件有正确的事件处理 */
+.hgj-env-switcher-wrapper .env-switcher {
+    pointer-events: auto !important;
+}
+
+.hgj-env-switcher-wrapper .env-switcher * {
+    pointer-events: auto !important;
+} /* 重置组件内所有元素 */
+.hgj-env-switcher-wrapper *,
+.hgj-env-switcher-wrapper *::before,
+.hgj-env-switcher-wrapper *::after {
+    box-sizing: border-box !important;
+    /* 不重置 margin 和 padding，让 UnoCSS 类能正常工作 */
+}
+
+/* 防止组件样式泄露到页面 */
+.hgj-env-switcher-wrapper button {
+    font-family: inherit !important;
+    font-size: inherit !important;
+    line-height: inherit !important;
+}
+
+/* Element Plus 样式作用域限制 */
+.hgj-env-switcher-wrapper .el-button {
+    margin: 0 !important;
+}
+
+/* 确保我们的组件有正确的事件处理 */
+.hgj-env-switcher-wrapper .env-switcher {
+    pointer-events: auto !important;
+}
+
+.hgj-env-switcher-wrapper .env-switcher * {
+    pointer-events: auto !important;
+}
+
+/* 防止 UnoCSS 样式冲突 - 提高我们组件内样式的优先级 */
+.hgj-env-switcher-wrapper [class*='flex'],
+.hgj-env-switcher-wrapper [class*='gap-'],
+.hgj-env-switcher-wrapper [class*='p-'],
+.hgj-env-switcher-wrapper [class*='m-'],
+.hgj-env-switcher-wrapper [class*='w-'],
+.hgj-env-switcher-wrapper [class*='h-'],
+.hgj-env-switcher-wrapper [class*='z-'],
+.hgj-env-switcher-wrapper [class*='absolute'],
+.hgj-env-switcher-wrapper [class*='relative'],
+.hgj-env-switcher-wrapper [class*='fixed'] {
+    /* 确保我们的 UnoCSS 类优先级更高 */
+    isolation: auto;
+}
