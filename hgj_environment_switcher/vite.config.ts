@@ -10,8 +10,8 @@ export default defineConfig(({ mode }) => ({
             userscript: {
                 icon: 'https://vitejs.dev/logo.svg',
                 namespace: 'npm/vite-plugin-monkey',
-                // match: ['*://*/*']
-                match: ['https://l-ui.com/*']
+                match: ['*://*/*']
+                // match: ['http://localhost:8899/*']
             },
             build: {
                 externalGlobals:
@@ -25,5 +25,11 @@ export default defineConfig(({ mode }) => ({
                         : {}
             }
         })
-    ]
+    ],
+    optimizeDeps: {
+        include: ['@vicons/ionicons5', 'naive-ui']
+    },
+    server: {
+        cors: true
+    }
 }))

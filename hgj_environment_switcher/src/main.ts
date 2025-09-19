@@ -1,8 +1,9 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import './styles/isolation.css'
-import 'lu2/theme/edge/css/common/ui.css'
 import { isInIframe } from './utils/utils'
+import { GM_listValues, GM_deleteValue } from '$'
 
 // 确保只挂载一次，且不在 iframe 中
 if (!isInIframe() && !document.getElementById('hgj-env-switcher-root')) {
@@ -31,6 +32,13 @@ if (!isInIframe() && !document.getElementById('hgj-env-switcher-root')) {
 
     container.appendChild(wrapper)
     document.body.appendChild(container)
-
-    createApp(App).mount(wrapper)
+    const app = createApp(App)
+    app.use(createPinia())
+    app.mount(wrapper)
+    console.log('环境切换器已加载')
+    console.log(GM_listValues())
+    // GM_deleteValue('hgj_env_switcher_data')
+    // GM_deleteValue('hgj_env_switcher_position')
+    // GM_deleteValue('hgj_env_switcher_default_account')
+    // GM_deleteValue('hgj_env_switcher_settings')
 }

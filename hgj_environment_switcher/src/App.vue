@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import EnvSwitcher from './components/EnvSwitcher.vue';
+import EnvSwitcher from './components/EnvSwitcher.vue'
 </script>
 
 <template>
-  <EnvSwitcher />
+    <EnvSwitcher />
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

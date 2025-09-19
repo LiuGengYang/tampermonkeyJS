@@ -2,6 +2,10 @@
 import { type Position } from '../types'
 import { onMounted, ref, onUnmounted } from 'vue'
 import SwitchBtn from './SwitchBtn.vue'
+import AccountManage from './AccountManage.vue'
+import { useSwitcherStore } from '../store/switcher'
+
+const switcherStore = useSwitcherStore()
 const pos = ref<Position>({ x: 0, y: 0 })
 const startPos = ref<Position>({ x: 0, y: 0 })
 let offsetX = 0
@@ -12,6 +16,8 @@ const optionsShow = ref(false)
 const moveThreshold = 5 // 移动阈值，超过这个距离才算拖动
 const switcher = ref<HTMLElement | null>(null)
 const envSwitcherBtn = ref<HTMLElement | null>(null)
+const accountManage = ref<HTMLElement | null>(null)
+const switchBtn = ref()
 
 // 拖拽状态管理
 const isDragging = ref(false)
@@ -25,6 +31,7 @@ let pendingY: number | null = null
 
 onMounted(() => {
     pos.value = { x: window.innerWidth - 80, y: window.innerHeight - 80 }
+    switcherStore.position && (pos.value = switcherStore.position as Position)
     maxX =
         window.innerWidth - (envSwitcherBtn.value as HTMLElement)?.offsetWidth
     maxY =
@@ -33,6 +40,12 @@ onMounted(() => {
     // 在 document 级别监听鼠标事件，确保快速移动时不会丢失事件
     document.addEventListener('mousemove', handleDocumentMouseMove)
     document.addEventListener('mouseup', handleDocumentMouseUp)
+    setTimeout(
+        () =>
+            ((switcher.value as HTMLElement).style.transition =
+                'all 0.3s ease'),
+        1000
+    )
 })
 
 onUnmounted(() => {
@@ -109,7 +122,10 @@ const handleDocumentMouseMove = (e: MouseEvent) => {
         if (isDragging.value) {
             pendingX = e.clientX - offsetX
             pendingY = e.clientY - offsetY
-
+            switcherStore.setPosition({
+                x: pendingX,
+                y: pendingY
+            })
             // 使用 requestAnimationFrame 来批量更新，避免频繁的 DOM 操作
             if (!animationId) {
                 animationId = requestAnimationFrame(updatePosition)
@@ -119,32 +135,24 @@ const handleDocumentMouseMove = (e: MouseEvent) => {
 }
 
 const handleDocumentMouseUp = () => {
-    const wasMouseDown = isMouseDown
-    const wasDragging = isDragging.value
-    const hadMoved = hasMoved
-
-    // 重置状态
-    isMouseDown = false
-    isDragging.value = false
-    hasMoved = false
-
     // 清除计时器
     if (clickTimer) {
         clearTimeout(clickTimer)
         clickTimer = null
     }
-
-    if (wasDragging) {
-        // 如果是拖拽结束
-        ;(switcher.value as HTMLElement).style.transition = 'all 0.3s ease'
-    } else if (wasMouseDown && !hadMoved) {
-        // 如果是点击（按下后没有移动且在150ms内松开）
-        handleClick()
-    }
+    // 重置状态
+    isMouseDown = false
+    clickTimer = setTimeout(() => {
+        isDragging.value = false
+    }, 300)
+    hasMoved = false
+    ;(switcher.value as HTMLElement).style.transition = 'all 0.3s ease'
 }
 
 const handleClick = () => {
+    if (isDragging.value) return
     const newValue = !optionsShow.value
+    !newValue && switchBtn.value?.closeQuickMenu()
     optionsShow.value = newValue
     if (newValue) {
         setTimeout(() => {
@@ -160,6 +168,11 @@ const closeOptionsOnClickOutside = (e: Event) => {
         document.removeEventListener('click', closeOptionsOnClickOutside)
     }
 }
+
+const showDialog = () => {
+    optionsShow.value = false
+    ;(accountManage.value as any).openDialog()
+}
 </script>
 
 <template>
@@ -167,9 +180,13 @@ const closeOptionsOnClickOutside = (e: Event) => {
         ref="switcher"
         class="env-switcher"
         :style="{ left: pos.x + 'px', top: pos.y + 'px' }"
-        @mousedown="dragStart"
     >
-        <div ref="envSwitcherBtn" class="env-switcher-btn">
+        <div
+            ref="envSwitcherBtn"
+            class="env-switcher-btn"
+            @mousedown.stop="dragStart"
+            @click.stop="handleClick"
+        >
             <svg
                 t="1757574763114"
                 class="icon"
@@ -189,8 +206,46 @@ const closeOptionsOnClickOutside = (e: Event) => {
                 ></path>
             </svg>
         </div>
-        <SwitchBtn v-if="optionsShow" :parentPos="pos" />
+        <div class="account-icon" @mousedown.stop @click.stop="showDialog">
+            <svg
+                t="1758098433552"
+                class="icon"
+                viewBox="0 0 1024 1024"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                p-id="17033"
+                width="25"
+                height="25"
+            >
+                <path
+                    d="M757.700755 776.680844c0.036125-0.296225 0.065025-0.59245 0.0867-0.895901C757.65018 775.893318 757.570705 776.088393 757.700755 776.680844z"
+                    fill="#4C79ED"
+                    p-id="17034"
+                ></path>
+                <path
+                    d="M661.030184 417.583631c0-88.116165-71.440852-159.557017-159.549792-159.557017-88.116165 0-159.549792 71.440852-159.549792 159.557017 0 88.145065 71.433627 159.549792 159.549792 159.549792C589.589332 577.140648 661.030184 505.728695 661.030184 417.583631z"
+                    fill="#4C79ED"
+                    p-id="17035"
+                ></path>
+                <path
+                    d="M757.787455 775.784943c0.007225-0.007225 0.01445-0.021675 0.021675-0.0289l0.093925-1.069301C757.89583 775.055218 757.816355 775.416468 757.787455 775.784943z"
+                    fill="#4C79ED"
+                    p-id="17036"
+                ></path>
+                <path
+                    d="M501.545417 7.225005C224.545939 7.225005 0 231.770945 0 508.770423c0 276.977803 224.545939 501.516517 501.545417 501.516517 276.992253 0 501.538192-224.538714 501.538192-501.516517C1003.08361 231.770945 778.53767 7.225005 501.545417 7.225005zM757.715205 776.832569c-0.021675-0.079475 0-0.0867-0.01445-0.151725-0.989826 7.44898-7.282805 13.185635-14.999111 13.185635-8.409906 0-15.880562-6.777055-15.880562-15.186961-29.297396-96.706696-119.060862-167.150497-225.333465-167.150497-106.279828 0-196.484019 73.803429-225.78864 170.524575l0.411825-3.374077c0 10.078882-10.042757 15.186961-15.851662 15.186961-8.402681 0-15.194186-6.777055-15.194186-15.186961 0.4046-1.640076 0.50575-3.244027 0.968151-4.913004 0.151725-0.411825 0.21675-0.859776 0.3757-1.271601 24.817893-84.922712 90.637691-152.332012 174.780103-178.963381-64.721597-30.279997-109.64668-95.78912-109.64668-171.955126 0-104.878177 85.031087-189.945389 189.945389-189.945389 104.878177 0 189.938164 85.059987 189.938164 189.945389 0 76.166006-44.968433 141.675129-109.668355 171.940676 84.142412 26.63137 149.954985 94.055119 174.772878 178.963381 0.180625 0.411825 1.242701 5.787229 1.365526 6.19183 0.238425 0.830876 0.07225 0.946476-0.093925 1.069301L757.715205 776.832569z"
+                    fill="#4C79ED"
+                    p-id="17037"
+                ></path>
+            </svg>
+        </div>
+        <SwitchBtn
+            v-model:show="optionsShow"
+            :parentPos="pos"
+            ref="switchBtn"
+        />
     </div>
+    <AccountManage ref="accountManage" />
 </template>
 
 <style scoped>
@@ -204,7 +259,6 @@ const closeOptionsOnClickOutside = (e: Event) => {
     font-weight: bold;
     cursor: move;
     z-index: 99999;
-    transition: all 0.3s ease;
     user-select: none;
 }
 
@@ -226,8 +280,10 @@ const closeOptionsOnClickOutside = (e: Event) => {
     z-index: 99999;
 }
 
-/* .env-switcher:hover {
-    filter: brightness(1.1);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-} */
+.account-icon {
+    position: absolute;
+    right: -60px;
+    top: -15px;
+    cursor: pointer;
+}
 </style>
