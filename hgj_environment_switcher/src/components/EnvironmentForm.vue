@@ -16,14 +16,14 @@
                 :options="devAccountOptions"
             />
         </n-form-item>
-        <n-form-item path="test" label="测试环境">
+        <n-form-item path="beta" label="测试环境">
             <n-select
-                v-model:value="envModel.test"
+                v-model:value="envModel.beta"
                 placeholder="请选择测试环境默认账号"
                 :clearable="true"
                 :filterable="true"
                 style="width: 100%"
-                :options="testAccountOptions"
+                :options="betaAccountOptions"
             />
         </n-form-item>
         <n-form-item path="prod" label="生产环境">
@@ -69,7 +69,7 @@ type EnvModel = DefaultAccount & {
 const formRef = ref()
 const envModel = ref<EnvModel>({
     dev: '',
-    test: '',
+    beta: '',
     prod: '',
     setting: {
         incognito: false
@@ -89,8 +89,8 @@ const devAccountOptions = computed(() =>
     }))
 )
 
-const testAccountOptions = computed(() =>
-    switcherStore.testAccounts.map((account: Account) => ({
+const betaAccountOptions = computed(() =>
+    switcherStore.betaAccounts.map((account: Account) => ({
         label: `${account.name} (${account.account})`,
         value: account.id
     }))

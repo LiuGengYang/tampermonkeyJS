@@ -1,5 +1,8 @@
+import { GM_cookie, unsafeWindow } from '$'
 import mitt, { type Emitter } from 'mitt'
 import { Env } from '../types'
+
+
 
 export function isInIframe() {
     try {
@@ -42,6 +45,24 @@ export function processUrl(env: Env): string {
         : (hostname = env + '-' + hostname)
     url.hostname = hostname
     return url.toString()
+}
+
+export function clearHGJCookie() {
+    const cookies = document.cookie ? document.cookie.split(';') : [];
+    for (let i = 0; i < cookies.length; i++) {
+        if (!cookies[i].includes('hgj')) continue;
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf('=');
+        const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        GM_cookie.delete({ name });
+    }
+}
+
+export function logOut() {
+    if (unsafeWindow) {
+        (document.getElementById("app") as any)?.__vue__?.$store?.commit('logout')
+        window.location.href = window.location.origin + '/login';
+    }
 }
 
 const emitter: Emitter<any> = mitt<any>()

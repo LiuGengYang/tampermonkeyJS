@@ -1,24 +1,15 @@
 <template>
     <div class="quick-switch" role="region" aria-label="快捷切换">
         <div class="quick-switch__header">快捷切换</div>
-        <div class="quick-switch__list">
-            <div
-                class="quick-switch__item"
-                v-for="item in accounts"
-                :key="item.id"
-            >
+        <div class="quick-switch__list" :style="{ 'justify-content': !accounts.length ? 'center' : 'flex-start' }">
+            <div class="quick-switch__item" v-for="item in accounts" :key="item.id">
                 <div class="item-top">
                     <div class="account-name">
                         <div>{{ item.name }}</div>
                         <div style="font-size: 10px">{{ item.account }}</div>
                     </div>
                     <div>
-                        <n-tag
-                            v-if="defaultAccount(item.id as string)"
-                            round
-                            :bordered="false"
-                            type="success"
-                        >
+                        <n-tag v-if="defaultAccount(item.id as string)" round :bordered="false" type="success">
                             <span class="env"> 默认 </span>
                             <template #icon>
                                 <n-icon :component="CheckmarkCircle" />
@@ -27,23 +18,21 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="quick-switch__item">
-                <div class="item-top">
-                    <div class="account-name">
-                        <div>王小明</div>
-                    </div>
-                    <div style="font-size: 10px">18605796752</div>
-                </div>
-            </div> -->
+            <n-empty v-if="!accounts.length" description="暂无数据">
+                <n-button type="primary" @click.stop="addNewByEnv">
+                    添加新账号
+                </n-button>
+            </n-empty>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { NTag, NIcon } from 'naive-ui'
+import { NTag, NIcon, NEmpty, NButton } from 'naive-ui'
 import { useSwitcherStore } from '../store/switcher'
-
 import { CheckmarkCircle } from '@vicons/ionicons5'
+import { globalEmitter } from '../utils/utils'
+import { clearHGJCookie, logOut } from '../utils/utils'
 import { computed } from 'vue'
 import { Env } from '../types'
 
@@ -71,6 +60,13 @@ const defaultAccount = computed(() => {
         return switcherStore.defaultAccount[props.env] === id
     }
 })
+
+const addNewByEnv = () => {
+    // globalEmitter.emit('addNewByEnv')
+    // 测试清除cookie
+    // clearHGJCookie()
+    logOut()
+}
 // GM_openInTab
 // TODO： 切换时同一环境 隐私窗口打开
 </script>
@@ -184,9 +180,11 @@ const defaultAccount = computed(() => {
     width: 6px;
     height: 6px;
 }
+
 .quick-switch__list::-webkit-scrollbar-track {
     background: transparent;
 }
+
 .quick-switch__list::-webkit-scrollbar-thumb {
     background: #e5e7eb;
     border-radius: 10px;
