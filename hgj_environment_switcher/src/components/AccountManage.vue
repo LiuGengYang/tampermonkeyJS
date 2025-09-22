@@ -32,12 +32,19 @@
 
 <script lang="ts" setup>
 import { NModal, NTabs, NTabPane } from 'naive-ui'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import AccountForm from './AccountForm.vue'
 import AccountTable from './AccountTable.vue'
 import EnvironmentForm from './EnvironmentForm.vue'
+import { globalEmitter } from '../utils/utils'
 
 const dialogVisible = ref(false)
+
+onMounted(() => {
+    globalEmitter.on('closeManage', () => {
+        dialogVisible.value = false
+    })
+})
 
 const openDialog = () => {
     dialogVisible.value = true

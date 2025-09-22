@@ -36,8 +36,17 @@
                 :options="prodAccountOptions"
             />
         </n-form-item>
-        <n-form-item path="setting.incognito" label="同环境下切换账号">
-            <n-switch v-model:value="envModel.setting.incognito">
+        <n-form-item path="setting.newTab" label="是否新标签打开">
+            <n-switch v-model:value="envModel.setting.newTab">
+                <template #checked> 新标签页打开 </template>
+                <template #unchecked> 当前标签页打开 </template>
+            </n-switch>
+        </n-form-item>
+        <n-form-item path="setting.incognito" label="是否隐私窗口打开新标签页">
+            <n-switch
+                v-model:value="envModel.setting.incognito"
+                :disabled="!envModel.setting.newTab"
+            >
                 <template #checked> 隐私窗口打开 </template>
                 <template #unchecked> 非隐私窗口打开 </template>
             </n-switch>
@@ -58,6 +67,7 @@ import { Account } from '../types'
 import { useSwitcherStore } from '../store/switcher'
 import { DefaultAccount, Setting } from '../lib/dataStorage'
 import { createDiscreteApi } from 'naive-ui'
+import { globalEmitter } from '../utils/utils'
 
 const switcherStore = useSwitcherStore()
 const { message } = createDiscreteApi(['message'])
@@ -72,7 +82,8 @@ const envModel = ref<EnvModel>({
     beta: '',
     prod: '',
     setting: {
-        incognito: false
+        incognito: false,
+        newTab: false
     }
 })
 
@@ -108,6 +119,7 @@ const handleSubmit = () => {
     switcherStore.setDefaultAccount(accountData)
     switcherStore.setSettings(envModel.value.setting)
     message.success('环境设置已保存')
+    globalEmitter.emit('closeManage')
 }
 </script>
 

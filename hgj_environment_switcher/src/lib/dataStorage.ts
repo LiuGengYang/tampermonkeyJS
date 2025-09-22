@@ -25,6 +25,7 @@ export type DefaultAccount = Record<Env, string | undefined>
 
 export type Setting = {
     incognito: boolean // 同环境下切换账号是否使用隐私窗口打开
+    newTab: boolean // 是否新标签打开
 }
 
 // 定义每个存储键对应的数据类型
@@ -475,16 +476,15 @@ class DataStorage {
     /**
      * 会话存储获取
      *
-     * @template K
-     * @param {K} key
-     * @param {StorageDataMap[K] | null} [defaultValue=null]
-     * @return {*}  {StorageDataMap[K] | null}
+     * @param {string} key
+     * @param {(Record<string, any> | null)} [defaultValue=null]
+     * @return {*}  {(Record<string, any> | null)}
      * @memberof DataStorage
      */
-    sessionGet<K extends StorageKey>(
-        key: K,
-        defaultValue: StorageDataMap[K] | null = null
-    ): StorageDataMap[K] | null {
+    sessionGet(
+        key: string,
+        defaultValue: Record<string, any> | null = null
+    ): Record<string, any> | null {
         try {
             const value = sessionStorage.getItem(key)
             return value !== null ? JSON.parse(value) : defaultValue
@@ -494,18 +494,14 @@ class DataStorage {
     }
 
     /**
-     * 会话存储设置
+     *会话存储设置
      *
-     * @template K
-     * @param {K} key
-     * @param {StorageDataMap[K]} value
+     * @param {string} key
+     * @param {Record<string, any>} value
      * @return {*}  {boolean}
      * @memberof DataStorage
      */
-    sessionSet<K extends StorageKey>(
-        key: K,
-        value: StorageDataMap[K]
-    ): boolean {
+    sessionSet(key: string, value: Record<string, any>): boolean {
         try {
             if (value === null || value === undefined) {
                 sessionStorage.removeItem(key)
@@ -519,13 +515,13 @@ class DataStorage {
     }
 
     /**
-     * 会话存储删除
+     * 会话存储移除
      *
-     * @param {StorageKey} key
+     * @param {string} key
      * @return {*}  {boolean}
      * @memberof DataStorage
      */
-    remove(key: StorageKey): boolean {
+    remove(key: string): boolean {
         try {
             sessionStorage.removeItem(key)
             return true

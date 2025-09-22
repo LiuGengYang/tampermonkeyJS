@@ -1,22 +1,16 @@
 <script setup lang="ts">
 import { GM_openInTab } from '$'
-import {
-    onMounted,
-    ref,
-    defineProps,
-    onUnmounted,
-    defineModel,
-    watch
-} from 'vue'
+import { ref, defineProps, onUnmounted, defineModel, watch } from 'vue'
 import { Position, Env } from '../types'
 import QuickMenu from './QuickMenu.vue'
 import { NButton } from 'naive-ui'
 import { Type } from 'naive-ui/es/button/src/interface'
 import { useSwitcherStore } from '../store/switcher'
 import { processUrl } from '../utils/utils'
-import { set } from 'lodash'
+import { createDiscreteApi } from 'naive-ui'
 
 const switcherStore = useSwitcherStore()
+const { message } = createDiscreteApi(['message'])
 
 defineProps<{
     parentPos: Position
@@ -33,7 +27,7 @@ const menu = ref([
     },
     {
         name: '测试环境',
-        value: 'test',
+        value: 'beta',
         type: 'info',
         show: false
     },
@@ -187,11 +181,20 @@ const closeQuickMenu = (index?: number) => {
     }
 }
 const openNewTabByEnv = (env: Env) => {
-    console.log(processUrl(env))
+    if (switcherStore.currentEnv === env) {
+        message.info('当前已是该环境，无需重复打开')
+        return
+    } else {
+        if (switcherStore.settings.newTab) {
+            GM_openInTab(processUrl(env), {
+                active: true,
+                incognito: switcherStore.settings.incognito
+            })
+        } else {
+            window.open(processUrl(env))
+        }
+    }
     show.value = false
-    // GM_openInTab(window.location.href, {
-    //     incognito: switcherStore.settings.incognito
-    // })
 }
 
 defineExpose({

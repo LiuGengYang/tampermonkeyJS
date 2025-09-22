@@ -1,15 +1,42 @@
 <template>
     <div class="quick-switch" role="region" aria-label="快捷切换">
-        <div class="quick-switch__header">快捷切换</div>
-        <div class="quick-switch__list" :style="{ 'justify-content': !accounts.length ? 'center' : 'flex-start' }">
-            <div class="quick-switch__item" v-for="item in accounts" :key="item.id">
+        <div class="quick-switch__header">
+            <span>快捷切换</span>
+            <n-tooltip trigger="hover">
+                <template #trigger>
+                    <n-icon size="20">
+                        <HelpCircleOutline />
+                    </n-icon>
+                </template>
+                双击复制账号信息
+            </n-tooltip>
+        </div>
+        <div
+            class="quick-switch__list"
+            :style="{
+                'justify-content': !accounts.length ? 'center' : 'flex-start'
+            }"
+        >
+            <div
+                class="quick-switch__item"
+                v-for="item in accounts"
+                :key="item.id"
+                @click.stop="handleClick(item)"
+            >
+                <!-- @click.stop="fillAccount(item)"
+                @dblclick.stop.prevent="copyToClipboard(item)" -->
                 <div class="item-top">
                     <div class="account-name">
                         <div>{{ item.name }}</div>
                         <div style="font-size: 10px">{{ item.account }}</div>
                     </div>
                     <div>
-                        <n-tag v-if="defaultAccount(item.id as string)" round :bordered="false" type="success">
+                        <n-tag
+                            v-if="defaultAccount(item.id as string)"
+                            round
+                            :bordered="false"
+                            type="success"
+                        >
                             <span class="env"> 默认 </span>
                             <template #icon>
                                 <n-icon :component="CheckmarkCircle" />
@@ -28,15 +55,19 @@
 </template>
 
 <script lang="ts" setup>
-import { NTag, NIcon, NEmpty, NButton } from 'naive-ui'
+import { NTag, NIcon, NEmpty, NButton, NTooltip } from 'naive-ui'
 import { useSwitcherStore } from '../store/switcher'
-import { CheckmarkCircle } from '@vicons/ionicons5'
-import { globalEmitter } from '../utils/utils'
-import { clearHGJCookie, logOut } from '../utils/utils'
-import { computed } from 'vue'
-import { Env } from '../types'
+import { CheckmarkCircle, HelpCircleOutline } from '@vicons/ionicons5'
+import { globalEmitter, fillInAccount, clickLoginBtn } from '../utils/utils'
+import dataStorage from '../lib/dataStorage'
+import { clearHGJCookie, logOut, processUrl } from '../utils/utils'
+import { computed, ref } from 'vue'
+import { Account, Env } from '../types'
+import { GM_openInTab, GM_setClipboard } from '$'
+import { createDiscreteApi } from 'naive-ui'
 
 const switcherStore = useSwitcherStore()
+const { message } = createDiscreteApi(['message'])
 
 const props = defineProps<{
     env: Env
@@ -61,14 +92,60 @@ const defaultAccount = computed(() => {
     }
 })
 
-const addNewByEnv = () => {
-    // globalEmitter.emit('addNewByEnv')
-    // 测试清除cookie
-    // clearHGJCookie()
-    logOut()
+const clickTimers = ref(new Map<string, number>())
+
+const handleClick = (account: Account) => {
+    const id = account.id as string
+    if (clickTimers.value.has(id)) {
+        clearTimeout(clickTimers.value.get(id)!)
+        clickTimers.value.delete(id)
+        copyToClipboard(account)
+    } else {
+        const timer = setTimeout(() => {
+            clickTimers.value.delete(id)
+            fillAccount(account)
+        }, 150)
+        clickTimers.value.set(id, timer)
+    }
 }
-// GM_openInTab
-// TODO： 切换时同一环境 隐私窗口打开
+
+const fillAccount = (account: Account) => {
+    if (switcherStore.currentEnv === props.env) {
+        dataStorage.sessionSet('session_account', {
+            account: account.account,
+            password: account.password
+        })
+        if (!window.location.pathname.includes('login')) {
+            clearHGJCookie()
+            logOut()
+        } else {
+            fillInAccount(account)
+            clickLoginBtn()
+        }
+    } else {
+        let url = `${processUrl(props.env)}?id=${account.id}`
+        if (switcherStore.settings.newTab) {
+            GM_openInTab(url, {
+                active: true,
+                incognito: switcherStore.settings.incognito
+            })
+        } else {
+            window.open(url)
+        }
+    }
+}
+
+const addNewByEnv = () => {
+    globalEmitter.emit('addNewByEnv')
+}
+
+const copyToClipboard = (account: Account) => {
+    GM_setClipboard(
+        `账号: ${account.account} \n密码: ${account.password}`,
+        'text'
+    )
+    message.success('账号信息已复制到剪贴板')
+}
 </script>
 
 <style scoped>
@@ -92,6 +169,9 @@ const addNewByEnv = () => {
     font-size: 13px;
     font-weight: 600;
     color: #111827;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .quick-switch__list {

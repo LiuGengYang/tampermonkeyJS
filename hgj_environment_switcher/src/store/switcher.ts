@@ -30,7 +30,8 @@ export const useSwitcherStore = defineStore('switcher', () => {
     const defaultAccount = ref<DefaultAccount>({} as DefaultAccount)
 
     const settings = ref<Setting>({
-        incognito: false
+        incognito: false,
+        newTab: false
     })
 
     const currentEnv = ref<Env>()
@@ -155,7 +156,8 @@ export const useSwitcherStore = defineStore('switcher', () => {
             {} as DefaultAccount
         ) as DefaultAccount
         settings.value = dataStorage.getSync(dataStorage.SETTINGS_KEY, {
-            incognito: false
+            incognito: false,
+            newTab: false
         }) as Setting
         currentEnv.value = getCurrentEnvironment() as Env
     })()
@@ -173,6 +175,7 @@ export const useSwitcherStore = defineStore('switcher', () => {
         defaultAccount,
         setDefaultAccount,
         settings,
-        setSettings
+        setSettings,
+        currentEnv
     }
 })

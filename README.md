@@ -12,4 +12,4 @@
 ### 2. 安装脚本
 | GitHub 源 |
 | --- |
-| [安装](https://raw.githubusercontent.com/LiuGengYang/tampermonkeyJS/main/hgj_environment_switcher.user.js) |
+| [安装](https://raw.githubusercontent.com/LiuGengYang/tampermonkeyJS/main/hgj_environment_switcher/dist/hgj_environment_switcher.user.js) |
