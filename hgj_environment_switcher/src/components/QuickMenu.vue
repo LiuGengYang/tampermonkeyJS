@@ -2,14 +2,6 @@
     <div class="quick-switch" role="region" aria-label="快捷切换">
         <div class="quick-switch__header">
             <span>快捷切换</span>
-            <n-tooltip trigger="hover">
-                <template #trigger>
-                    <n-icon size="20">
-                        <HelpCircleOutline />
-                    </n-icon>
-                </template>
-                双击复制账号信息
-            </n-tooltip>
         </div>
         <div
             class="quick-switch__list"
@@ -21,16 +13,16 @@
                 class="quick-switch__item"
                 v-for="item in accounts"
                 :key="item.id"
-                @click.stop="handleClick(item)"
+                @click.stop="fillAccount(item)"
             >
-                <!-- @click.stop="fillAccount(item)"
-                @dblclick.stop.prevent="copyToClipboard(item)" -->
                 <div class="item-top">
                     <div class="account-name">
                         <div>{{ item.name }}</div>
-                        <div style="font-size: 10px">{{ item.account }}</div>
+                        <div style="font-size: 10px; margin-top: 10px">
+                            {{ item.account }}
+                        </div>
                     </div>
-                    <div>
+                    <div class="options">
                         <n-tag
                             v-if="defaultAccount(item.id as string)"
                             round
@@ -42,6 +34,13 @@
                                 <n-icon :component="CheckmarkCircle" />
                             </template>
                         </n-tag>
+                        <n-button
+                            type="primary"
+                            size="small"
+                            class="copyBtn"
+                            @click.stop="copyToClipboard(item)"
+                            >复制</n-button
+                        >
                     </div>
                 </div>
             </div>
@@ -55,13 +54,13 @@
 </template>
 
 <script lang="ts" setup>
-import { NTag, NIcon, NEmpty, NButton, NTooltip } from 'naive-ui'
+import { NTag, NIcon, NEmpty, NButton } from 'naive-ui'
 import { useSwitcherStore } from '../store/switcher'
-import { CheckmarkCircle, HelpCircleOutline } from '@vicons/ionicons5'
+import { CheckmarkCircle } from '@vicons/ionicons5'
 import { globalEmitter, fillInAccount, clickLoginBtn } from '../utils/utils'
 import dataStorage from '../lib/dataStorage'
 import { clearHGJCookie, logOut, processUrl } from '../utils/utils'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { Account, Env } from '../types'
 import { GM_openInTab, GM_setClipboard } from '$'
 import { createDiscreteApi } from 'naive-ui'
@@ -91,23 +90,6 @@ const defaultAccount = computed(() => {
         return switcherStore.defaultAccount[props.env] === id
     }
 })
-
-const clickTimers = ref(new Map<string, number>())
-
-const handleClick = (account: Account) => {
-    const id = account.id as string
-    if (clickTimers.value.has(id)) {
-        clearTimeout(clickTimers.value.get(id)!)
-        clickTimers.value.delete(id)
-        copyToClipboard(account)
-    } else {
-        const timer = setTimeout(() => {
-            clickTimers.value.delete(id)
-            fillAccount(account)
-        }, 150)
-        clickTimers.value.set(id, timer)
-    }
-}
 
 const fillAccount = (account: Account) => {
     if (switcherStore.currentEnv === props.env) {
@@ -268,5 +250,17 @@ const copyToClipboard = (account: Account) => {
 .quick-switch__list::-webkit-scrollbar-thumb {
     background: #e5e7eb;
     border-radius: 10px;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.copyBtn {
+    width: 50px;
+    height: 20px;
+    margin-top: 10px;
 }
 </style>

@@ -10,8 +10,12 @@ export default defineConfig(({ mode }) => ({
             userscript: {
                 icon: 'https://vitejs.dev/logo.svg',
                 namespace: 'npm/vite-plugin-monkey',
-                match: ['*://*/*']
-                // match: ['http://localhost:8899/*']
+                match: [
+                    'http://localhost:8880/*',
+                    'http://localhost:8899/*',
+                    '*://*.hgj.com/*',
+                    '*://*.smartai.hgj.com/*'
+                ]
             },
             build: {
                 externalGlobals:

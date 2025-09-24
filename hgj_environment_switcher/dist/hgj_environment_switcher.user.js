@@ -1,9 +1,12 @@
 // ==UserScript==
 // @name       hgj_environment_switcher
 // @namespace  npm/vite-plugin-monkey
-// @version    0.0.0
+// @version    1.0.0
 // @icon       https://vitejs.dev/logo.svg
-// @match      *://*/*
+// @match      http://localhost:8880/*
+// @match      http://localhost:8899/*
+// @match      *://*.hgj.com/*
+// @match      *://*.smartai.hgj.com/*
 // @require    https://cdn.jsdelivr.net/npm/vue@3.5.21/dist/vue.global.prod.js
 // @grant      GM_addStyle
 // @grant      GM_addValueChangeListener
@@ -22,14 +25,14 @@
 
   const d=new Set;const importCSS = async e=>{d.has(e)||(d.add(e),(t=>{typeof GM_addStyle=="function"?GM_addStyle(t):document.head.appendChild(document.createElement("style")).append(t);})(e));};
 
-  importCSS(" .quick-switch[data-v-f3a0a4bf]{width:220px;height:200px;border:1px solid #e5e7eb;border-radius:6px;font-family:system-ui,-apple-system,Helvetica Neue,Arial;background:#fff;box-shadow:0 1px 2px #1018280a;display:flex;flex-direction:column;overflow:hidden}.quick-switch__header[data-v-f3a0a4bf]{padding:8px 10px;background:linear-gradient(180deg,#f9fafb,#fff);border-bottom:1px solid #f1f5f9;font-size:13px;font-weight:600;color:#111827;display:flex;justify-content:center;align-items:center}.quick-switch__list[data-v-f3a0a4bf]{padding:6px;overflow-y:auto;flex:1 1 auto;display:flex;flex-direction:column;gap:6px}.quick-switch__item[data-v-f3a0a4bf]{display:flex;flex-direction:column;padding:6px;border-radius:4px;background:#fbfdff;border:1px solid transparent;transition:background .15s,border-color .15s;font-size:12px}.quick-switch__item[data-v-f3a0a4bf]:hover{background:#f1f5f9;border-color:#e6eef8}.item-top[data-v-f3a0a4bf]{display:flex;justify-content:space-between;align-items:center;gap:6px}.account-name[data-v-f3a0a4bf]{font-weight:600;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:75px;font-size:12px;display:flex;flex-direction:column;align-items:flex-start}.badge-account[data-v-f3a0a4bf]{font-size:11px;color:#374151;background:#eef2ff;padding:2px 6px;border-radius:999px}.item-bottom[data-v-f3a0a4bf]{display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:6px}.env[data-v-f3a0a4bf]{font-size:11px;color:#6b7280;padding:2px 6px}.session-indicator[data-v-f3a0a4bf]{font-size:11px;padding:2px 6px;border-radius:999px;background:#e5e7eb;color:#374151}.session-indicator.active[data-v-f3a0a4bf]{background:#10b981;color:#fff;box-shadow:0 1px #10b98126 inset}.quick-switch__list[data-v-f3a0a4bf]::-webkit-scrollbar{width:6px;height:6px}.quick-switch__list[data-v-f3a0a4bf]::-webkit-scrollbar-track{background:transparent}.quick-switch__list[data-v-f3a0a4bf]::-webkit-scrollbar-thumb{background:#e5e7eb;border-radius:10px}.el-button[data-v-d9ac85f1]{margin-left:0!important}.envOptions[data-v-d9ac85f1]{display:flex;flex-direction:column;padding:12px;z-index:9999;position:absolute}button[data-v-d9ac85f1]{width:120px;margin-top:8px}.quick-menu[data-v-d9ac85f1]{position:absolute;top:0;color:#000}.account-table[data-v-8f985f51]{margin-top:20px}.modal-content[data-v-d1d92ceb]{min-width:600px}.tab-content[data-v-d1d92ceb]{width:600px;height:500px;padding:0 20px}.env-switcher[data-v-e1bd9c12]{position:fixed;border-radius:50%;display:flex;justify-content:center;align-items:center;color:#fff;font-weight:700;cursor:move;z-index:99999;-webkit-user-select:none;user-select:none}.env-switcher-btn[data-v-e1bd9c12]{width:40px;height:40px;background-color:#4285f4;border-radius:50%;display:flex;justify-content:center;align-items:center;box-shadow:0 3px 12px #0000004d;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);border:2px solid rgba(255,255,255,.3);cursor:pointer;position:absolute;left:0;top:0;z-index:99999}.account-icon[data-v-e1bd9c12]{position:absolute;right:-60px;top:-15px;cursor:pointer} ");
+  importCSS(" .quick-switch[data-v-f5224cf8]{width:220px;height:200px;border:1px solid #e5e7eb;border-radius:6px;font-family:system-ui,-apple-system,Helvetica Neue,Arial;background:#fff;box-shadow:0 1px 2px #1018280a;display:flex;flex-direction:column;overflow:hidden}.quick-switch__header[data-v-f5224cf8]{padding:8px 10px;background:linear-gradient(180deg,#f9fafb,#fff);border-bottom:1px solid #f1f5f9;font-size:13px;font-weight:600;color:#111827;display:flex;justify-content:center;align-items:center}.quick-switch__list[data-v-f5224cf8]{padding:6px;overflow-y:auto;flex:1 1 auto;display:flex;flex-direction:column;gap:6px}.quick-switch__item[data-v-f5224cf8]{display:flex;flex-direction:column;padding:6px;border-radius:4px;background:#fbfdff;border:1px solid transparent;transition:background .15s,border-color .15s;font-size:12px}.quick-switch__item[data-v-f5224cf8]:hover{background:#f1f5f9;border-color:#e6eef8}.item-top[data-v-f5224cf8]{display:flex;justify-content:space-between;align-items:center;gap:6px}.account-name[data-v-f5224cf8]{font-weight:600;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:75px;font-size:12px;display:flex;flex-direction:column;align-items:flex-start}.badge-account[data-v-f5224cf8]{font-size:11px;color:#374151;background:#eef2ff;padding:2px 6px;border-radius:999px}.item-bottom[data-v-f5224cf8]{display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:6px}.env[data-v-f5224cf8]{font-size:11px;color:#6b7280;padding:2px 6px}.session-indicator[data-v-f5224cf8]{font-size:11px;padding:2px 6px;border-radius:999px;background:#e5e7eb;color:#374151}.session-indicator.active[data-v-f5224cf8]{background:#10b981;color:#fff;box-shadow:0 1px #10b98126 inset}.quick-switch__list[data-v-f5224cf8]::-webkit-scrollbar{width:6px;height:6px}.quick-switch__list[data-v-f5224cf8]::-webkit-scrollbar-track{background:transparent}.quick-switch__list[data-v-f5224cf8]::-webkit-scrollbar-thumb{background:#e5e7eb;border-radius:10px}.options[data-v-f5224cf8]{display:flex;flex-direction:column;align-items:flex-end}.copyBtn[data-v-f5224cf8]{width:50px;height:20px;margin-top:10px}.el-button[data-v-d9ac85f1]{margin-left:0!important}.envOptions[data-v-d9ac85f1]{display:flex;flex-direction:column;padding:12px;z-index:9999;position:absolute}button[data-v-d9ac85f1]{width:120px;margin-top:8px}.quick-menu[data-v-d9ac85f1]{position:absolute;top:0;color:#000}.account-table[data-v-8f985f51]{margin-top:20px}.modal-content[data-v-d1d92ceb]{min-width:600px}.tab-content[data-v-d1d92ceb]{width:600px;height:500px;padding:0 20px}.env-switcher[data-v-e1bd9c12]{position:fixed;border-radius:50%;display:flex;justify-content:center;align-items:center;color:#fff;font-weight:700;cursor:move;z-index:99999;-webkit-user-select:none;user-select:none}.env-switcher-btn[data-v-e1bd9c12]{width:40px;height:40px;background-color:#4285f4;border-radius:50%;display:flex;justify-content:center;align-items:center;box-shadow:0 3px 12px #0000004d;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);border:2px solid rgba(255,255,255,.3);cursor:pointer;position:absolute;left:0;top:0;z-index:99999}.account-icon[data-v-e1bd9c12]{position:absolute;right:-60px;top:-15px;cursor:pointer} ");
 
   var __getOwnPropNames = Object.getOwnPropertyNames;
   var __commonJS = (cb, mod) => function __require() {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
   var require_main_001 = __commonJS({
-    "main-CopY8kgZ.js"(exports, module) {
+    "main-DAvz3uUN.js"(exports, module) {
       /*!
        * pinia v3.0.3
        * (c) 2025 Eduardo San Martin Morote
@@ -40591,7 +40594,7 @@ remove(key) {
           currentEnv
         };
       });
-      const _hoisted_1$4 = {
+      const _hoisted_1$3 = {
         xmlns: "http://www.w3.org/2000/svg",
         "xmlns:xlink": "http://www.w3.org/1999/xlink",
         viewBox: "0 0 512 512"
@@ -40601,7 +40604,7 @@ remove(key) {
         render: function render2(_ctx, _cache) {
           return vue.openBlock(), vue.createElementBlock(
             "svg",
-            _hoisted_1$4,
+            _hoisted_1$3,
             _cache[0] || (_cache[0] = [
               vue.createElementVNode(
                 "path",
@@ -40616,68 +40619,16 @@ remove(key) {
           );
         }
       });
-      const _hoisted_1$3 = {
-        xmlns: "http://www.w3.org/2000/svg",
-        "xmlns:xlink": "http://www.w3.org/1999/xlink",
-        viewBox: "0 0 512 512"
-      };
-      const HelpCircleOutline = vue.defineComponent({
-        name: "HelpCircleOutline",
-        render: function render2(_ctx, _cache) {
-          return vue.openBlock(), vue.createElementBlock(
-            "svg",
-            _hoisted_1$3,
-            _cache[0] || (_cache[0] = [
-              vue.createElementVNode(
-                "path",
-                {
-                  d: "M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80z",
-                  fill: "none",
-                  stroke: "currentColor",
-                  "stroke-miterlimit": "10",
-                  "stroke-width": "32"
-                },
-                null,
-                -1
-),
-              vue.createElementVNode(
-                "path",
-                {
-                  d: "M200 202.29s.84-17.5 19.57-32.57C230.68 160.77 244 158.18 256 158c10.93-.14 20.69 1.67 26.53 4.45c10 4.76 29.47 16.38 29.47 41.09c0 26-17 37.81-36.37 50.8S251 281.43 251 296",
-                  fill: "none",
-                  stroke: "currentColor",
-                  "stroke-linecap": "round",
-                  "stroke-miterlimit": "10",
-                  "stroke-width": "28"
-                },
-                null,
-                -1
-),
-              vue.createElementVNode(
-                "circle",
-                {
-                  cx: "250",
-                  cy: "348",
-                  r: "20",
-                  fill: "currentColor"
-                },
-                null,
-                -1
-)
-            ])
-          );
-        }
-      });
       const _hoisted_1$2 = {
         class: "quick-switch",
         role: "region",
         "aria-label": "快捷切换"
       };
-      const _hoisted_2$1 = { class: "quick-switch__header" };
-      const _hoisted_3$1 = ["onClick"];
-      const _hoisted_4 = { class: "item-top" };
-      const _hoisted_5 = { class: "account-name" };
-      const _hoisted_6 = { style: { "font-size": "10px" } };
+      const _hoisted_2$1 = ["onClick"];
+      const _hoisted_3$1 = { class: "item-top" };
+      const _hoisted_4 = { class: "account-name" };
+      const _hoisted_5 = { style: { "font-size": "10px", "margin-top": "10px" } };
+      const _hoisted_6 = { class: "options" };
       const _sfc_main$7 = vue.defineComponent({
         __name: "QuickMenu",
         props: {
@@ -40704,21 +40655,6 @@ remove(key) {
               return switcherStore.defaultAccount[props.env] === id;
             };
           });
-          const clickTimers = vue.ref( new Map());
-          const handleClick2 = (account) => {
-            const id = account.id;
-            if (clickTimers.value.has(id)) {
-              clearTimeout(clickTimers.value.get(id));
-              clickTimers.value.delete(id);
-              copyToClipboard(account);
-            } else {
-              const timer = setTimeout(() => {
-                clickTimers.value.delete(id);
-                fillAccount(account);
-              }, 150);
-              clickTimers.value.set(id, timer);
-            }
-          };
           const fillAccount = (account) => {
             if (switcherStore.currentEnv === props.env) {
               dataStorage.sessionSet("session_account", {
@@ -40757,23 +40693,9 @@ remove(key) {
           };
           return (_ctx, _cache) => {
             return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$2, [
-              vue.createElementVNode("div", _hoisted_2$1, [
-                _cache[1] || (_cache[1] = vue.createElementVNode("span", null, "快捷切换", -1)),
-                vue.createVNode(vue.unref(NTooltip), { trigger: "hover" }, {
-                  trigger: vue.withCtx(() => [
-                    vue.createVNode(vue.unref(NIcon), { size: "20" }, {
-                      default: vue.withCtx(() => [
-                        vue.createVNode(vue.unref(HelpCircleOutline))
-                      ]),
-                      _: 1
-                    })
-                  ]),
-                  default: vue.withCtx(() => [
-                    _cache[0] || (_cache[0] = vue.createTextVNode(" 双击复制账号信息 ", -1))
-                  ]),
-                  _: 1
-                })
-              ]),
+              _cache[3] || (_cache[3] = vue.createElementVNode("div", { class: "quick-switch__header" }, [
+                vue.createElementVNode("span", null, "快捷切换")
+              ], -1)),
               vue.createElementVNode("div", {
                 class: "quick-switch__list",
                 style: vue.normalizeStyle({
@@ -40784,14 +40706,14 @@ remove(key) {
                   return vue.openBlock(), vue.createElementBlock("div", {
                     class: "quick-switch__item",
                     key: item.id,
-                    onClick: vue.withModifiers(($event) => handleClick2(item), ["stop"])
+                    onClick: vue.withModifiers(($event) => fillAccount(item), ["stop"])
                   }, [
-                    vue.createElementVNode("div", _hoisted_4, [
-                      vue.createElementVNode("div", _hoisted_5, [
+                    vue.createElementVNode("div", _hoisted_3$1, [
+                      vue.createElementVNode("div", _hoisted_4, [
                         vue.createElementVNode("div", null, vue.toDisplayString(item.name), 1),
-                        vue.createElementVNode("div", _hoisted_6, vue.toDisplayString(item.account), 1)
+                        vue.createElementVNode("div", _hoisted_5, vue.toDisplayString(item.account), 1)
                       ]),
-                      vue.createElementVNode("div", null, [
+                      vue.createElementVNode("div", _hoisted_6, [
                         defaultAccount.value(item.id) ? (vue.openBlock(), vue.createBlock(vue.unref(NTag), {
                           key: 0,
                           round: "",
@@ -40802,13 +40724,24 @@ remove(key) {
                             vue.createVNode(vue.unref(NIcon), { component: vue.unref(CheckmarkCircle) }, null, 8, ["component"])
                           ]),
                           default: vue.withCtx(() => [
-                            _cache[2] || (_cache[2] = vue.createElementVNode("span", { class: "env" }, " 默认 ", -1))
+                            _cache[0] || (_cache[0] = vue.createElementVNode("span", { class: "env" }, " 默认 ", -1))
                           ]),
                           _: 1
-                        })) : vue.createCommentVNode("", true)
+                        })) : vue.createCommentVNode("", true),
+                        vue.createVNode(vue.unref(Button), {
+                          type: "primary",
+                          size: "small",
+                          class: "copyBtn",
+                          onClick: vue.withModifiers(($event) => copyToClipboard(item), ["stop"])
+                        }, {
+                          default: vue.withCtx(() => [..._cache[1] || (_cache[1] = [
+                            vue.createTextVNode("复制", -1)
+                          ])]),
+                          _: 1
+                        }, 8, ["onClick"])
                       ])
                     ])
-                  ], 8, _hoisted_3$1);
+                  ], 8, _hoisted_2$1);
                 }), 128)),
                 !accounts.value.length ? (vue.openBlock(), vue.createBlock(vue.unref(NEmpty), {
                   key: 0,
@@ -40819,7 +40752,7 @@ remove(key) {
                       type: "primary",
                       onClick: vue.withModifiers(addNewByEnv, ["stop"])
                     }, {
-                      default: vue.withCtx(() => [..._cache[3] || (_cache[3] = [
+                      default: vue.withCtx(() => [..._cache[2] || (_cache[2] = [
                         vue.createTextVNode(" 添加新账号 ", -1)
                       ])]),
                       _: 1
@@ -40839,7 +40772,7 @@ remove(key) {
         }
         return target;
       };
-      const QuickMenu = _export_sfc(_sfc_main$7, [["__scopeId", "data-v-f3a0a4bf"]]);
+      const QuickMenu = _export_sfc(_sfc_main$7, [["__scopeId", "data-v-f5224cf8"]]);
       const btnWidth = 44;
       const _sfc_main$6 = vue.defineComponent({
         __name: "SwitchBtn",
