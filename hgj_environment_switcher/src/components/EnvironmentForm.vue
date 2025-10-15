@@ -55,6 +55,16 @@
             <n-switch v-model:value="envModel.setting.debug"> </n-switch>
         </n-form-item>
         <n-flex justify="center">
+            <n-popconfirm
+                @positive-click="clearAllData()"
+                negative-text="取消"
+                positive-text="确定"
+            >
+                确定清空全部数据吗？
+                <template #trigger>
+                    <n-button type="warning">清空全部数据</n-button>
+                </template>
+            </n-popconfirm>
             <n-button style="width: 250px" type="primary" @click="handleSubmit"
                 >提交</n-button
             >
@@ -70,7 +80,8 @@ import {
     NButton,
     NSwitch,
     NFlex,
-    NInput
+    NInput,
+    NPopconfirm
 } from 'naive-ui'
 import { computed, onMounted, ref } from 'vue'
 import { omit } from 'lodash'
@@ -78,7 +89,7 @@ import { Account } from '../types'
 import { useSwitcherStore } from '../store/switcher'
 import { DefaultAccount, Setting } from '../lib/dataStorage'
 import { createDiscreteApi } from 'naive-ui'
-import { globalEmitter } from '../utils/utils'
+import { globalEmitter, clearAllData } from '../utils/utils'
 
 const switcherStore = useSwitcherStore()
 const { message } = createDiscreteApi(['message'])

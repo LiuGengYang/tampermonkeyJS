@@ -1,4 +1,10 @@
-import { GM_cookie, unsafeWindow, GM_xmlhttpRequest } from '$'
+import {
+    GM_cookie,
+    unsafeWindow,
+    GM_xmlhttpRequest,
+    GM_listValues,
+    GM_deleteValue
+} from '$'
 import mitt, { type Emitter } from 'mitt'
 import { Env } from '../types'
 import JSEncrypt from 'jsencrypt'
@@ -511,7 +517,13 @@ export function chooseSubAccount(account: string) {
     Array.from(labelList)
         .find(item => item.title === account)
         ?.click()
-    // const btns: NodeListOf<HTMLLabelElement> =
-    //     document.querySelectorAll('.base-btn')
-    // btns[1].click()
+    const btns: NodeListOf<HTMLLabelElement> =
+        document.querySelectorAll('.base-btn')
+    btns[1].click()
+}
+
+export function clearAllData() {
+    GM_listValues().forEach(key => {
+        GM_deleteValue(key)
+    })
 }
