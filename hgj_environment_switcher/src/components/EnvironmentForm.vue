@@ -118,27 +118,21 @@ onMounted(() => {
 })
 const devAccountOptions = computed(() =>
     switcherStore.devAccounts.map((account: Account) => ({
-        label: `${account.defaultSubAccount!.enterpriseName} (${
-            account.account
-        })`,
+        label: `${account.defaultSubAccount?.enterpriseName} (${account.account})`,
         value: account.userId
     }))
 )
 
 const betaAccountOptions = computed(() =>
     switcherStore.betaAccounts.map((account: Account) => ({
-        label: `${account.defaultSubAccount!.enterpriseName} (${
-            account.account
-        })`,
+        label: `${account.defaultSubAccount?.enterpriseName} (${account.account})`,
         value: account.userId
     }))
 )
 
 const prodAccountOptions = computed(() =>
     switcherStore.prodAccounts.map((account: Account) => ({
-        label: `${account.defaultSubAccount!.enterpriseName} (${
-            account.account
-        })`,
+        label: `${account.defaultSubAccount?.enterpriseName} (${account.account})`,
         value: account.userId
     }))
 )

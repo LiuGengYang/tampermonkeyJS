@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { GM_openInTab } from '$'
-import { ref, onUnmounted, defineModel, watch } from 'vue'
+import { ref, onUnmounted, defineModel, watch, nextTick } from 'vue'
 import { Position, Env } from '../types'
 import QuickMenu from './QuickMenu.vue'
 import { NButton } from 'naive-ui'
@@ -15,6 +15,8 @@ const { message } = createDiscreteApi(['message'])
 defineProps<{
     parentPos: Position
 }>()
+
+const elHeight = 200
 
 const show = defineModel('show', { type: Boolean, default: false })
 
@@ -38,6 +40,7 @@ const menu = ref([
         show: false
     }
 ])
+
 enum HDirection {
     LEFT,
     RIGHT
@@ -56,6 +59,10 @@ const windowWidth =
     window.innerWidth ||
     document.documentElement.clientWidth ||
     document.body.clientWidth
+const windowHeight =
+    window.innerHeight ||
+    document.documentElement.clientHeight ||
+    document.body.clientHeight
 const envOptions = ref<HTMLElement | null>(null)
 const pos = ref({ x: 0, y: 0 })
 const safeMargin = { width: 0, height: 0 }
@@ -82,30 +89,25 @@ const adjustPosition = (entry: entry) => {
 }
 
 const recordMoveStep = (entry: entry) => {
-    const { left, right, top, bottom } = entry.boundingClientRect
+    const { left, top, bottom } = entry.boundingClientRect
     let newX = pos.value.x
     let newY = pos.value.y
     if (left <= 0) {
-        console.log('enter left')
         newX = pos.value.x + safeMargin.width + btnWidth
         menuDirection.value[0] = HDirection.RIGHT
     } else if (
         left > windowWidth - safeMargin.width &&
         menuDirection.value[0] === HDirection.RIGHT
     ) {
-        console.log('enter right')
-        console.log(window.innerWidth, right)
         newX = pos.value.x - safeMargin.width - btnWidth
         menuDirection.value[0] = HDirection.LEFT
     } else if (top < 0 && menuDirection.value[1] !== VDirection.BOTTOM) {
-        console.log('enter top')
         newY = pos.value.y + safeMargin.height + btnWidth
         menuDirection.value[1] = VDirection.BOTTOM
     } else if (
         window.innerHeight <= bottom &&
         menuDirection.value[1] !== VDirection.TOP
     ) {
-        console.log('enter bottom')
         newY = pos.value.y - safeMargin.height - btnWidth
         menuDirection.value[1] = VDirection.TOP
     }
@@ -117,8 +119,6 @@ const createObserver = () => {
     observer = new IntersectionObserver(
         entries => {
             const entry = entries[0]
-            console.log('enter move', entry)
-
             entry.intersectionRatio < 1 && adjustPosition(entry)
         },
         {
@@ -167,6 +167,16 @@ const openQuickMenu = (index: number) => {
     if (menu.value[index].show) return
     closeQuickMenu()
     menu.value[index].show = true
+    nextTick(() => {
+        const el = document.getElementById(`quickMenu-${index}`)
+        if (el) {
+            const rect = el.getBoundingClientRect()
+            if (rect.top + elHeight > windowHeight) {
+                const moveY = rect.top + elHeight - windowHeight
+                el.style.transform = `translateY(-${moveY}px)`
+            }
+        }
+    })
 }
 
 const closeQuickMenu = (index?: number) => {
@@ -214,6 +224,7 @@ const isInEnvOptions = (el: EventTarget | null) => {
 
 // 当鼠标离开菜单按钮时，如果是移入到弹层，则保持菜单打开，并在离开弹层后再关闭
 const onMouseLeaveMenu = (evt: MouseEvent, index: number) => {
+    // return
     const to = evt.relatedTarget as EventTarget | null
     if (isInOverlay(to)) {
         // 进入弹层，保持开启状态，并在全局监听中控制关闭
@@ -301,7 +312,10 @@ defineExpose({
                 }"
                 v-if="item.show"
             >
-                <QuickMenu :env="item.value as Env" />
+                <QuickMenu
+                    :id="`quickMenu-${index}`"
+                    :env="item.value as Env"
+                />
             </div>
         </n-button>
     </div>

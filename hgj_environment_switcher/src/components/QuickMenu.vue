@@ -19,7 +19,7 @@
                     <div class="account-name">
                         <div
                             class="account-name__text"
-                            :title="item.defaultSubAccount!.enterpriseName"
+                            :title="item.defaultSubAccount?.enterpriseName"
                         >
                             <n-icon
                                 v-if="defaultAccount(item.userId as string)"
@@ -29,7 +29,7 @@
                                 style="margin-right: 4px"
                             />
                             <span>{{
-                                item.defaultSubAccount!.enterpriseName
+                                item.defaultSubAccount?.enterpriseName
                             }}</span>
                         </div>
                         <div style="font-size: 10px; margin-top: 10px">
@@ -38,7 +38,9 @@
                     </div>
                     <div class="options">
                         <n-popselect
-                            :default-value="item.defaultSubAccount!.enterpriseId"
+                            :default-value="
+                                item.defaultSubAccount?.enterpriseId
+                            "
                             :options="
                                 item.subAccount?.map(i => ({
                                     label: i.enterpriseName,
@@ -114,9 +116,10 @@ const accounts = computed(() => {
 
 const defaultAccountName = ref<string[]>([])
 
-accounts.value.forEach(item =>
-    defaultAccountName.value.push(item.defaultSubAccount!.enterpriseName)
-)
+accounts.value.forEach(item => {
+    item.defaultSubAccount &&
+        defaultAccountName.value.push(item.defaultSubAccount.enterpriseName)
+})
 
 const defaultAccount = computed(() => {
     return (id: string) => {
