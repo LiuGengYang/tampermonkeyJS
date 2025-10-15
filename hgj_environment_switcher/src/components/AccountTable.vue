@@ -15,7 +15,7 @@
 import { NTag, NButton, NSpace, NDataTable, NPopconfirm } from 'naive-ui'
 import { createDiscreteApi } from 'naive-ui'
 import { onMounted, ref, h } from 'vue'
-import { Account, EnvTagType } from '../types'
+import { Account, Env, EnvTagType } from '../types'
 import { globalEmitter } from '../utils/utils'
 import { useSwitcherStore } from '../store/switcher'
 
@@ -25,8 +25,8 @@ const switcherStore = useSwitcherStore()
 const accounts = ref<Account[]>([])
 const columns = [
     {
-        title: '账号名',
-        key: 'name',
+        title: '默认子账号',
+        key: 'defaultSubAccount.enterpriseName',
         align: 'center' as const
     },
     {
@@ -44,14 +44,10 @@ const columns = [
         key: 'env',
         align: 'center' as const,
         render: (row: Account) => {
-            return h(NSpace, { justify: 'space-evenly', size: 'small' }, () =>
-                row.env.map(env =>
-                    h(
-                        NTag,
-                        { type: EnvTagType[env], size: 'medium' },
-                        { default: () => env }
-                    )
-                )
+            return h(
+                NTag,
+                { type: EnvTagType[row.env as Env], size: 'medium' },
+                { default: () => row.env }
             )
         }
     },
@@ -81,7 +77,7 @@ const columns = [
                     {
                         onPositiveClick: (e: Event) => {
                             e.stopPropagation()
-                            deleteAccount(row.id)
+                            deleteAccount(row.userId)
                         },
                         positiveText: '确认删除',
                         negativeText: '取消'

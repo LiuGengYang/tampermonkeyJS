@@ -11,10 +11,25 @@ export enum EnvTagType {
     prod = 'success'
 }
 
-export type Account = {
-    name: string
+export interface subAccount {
+    companyId: string
+    enterpriseAddress: string
+    enterpriseId: string
+    enterpriseName: string
+    expireTime: string
+    isAudit: number
+    isCorp: number
+    isCorpRoot: number
+    isSaas: number
+    state: number
+    systemRole: number
+}
+
+export interface Account {
     account: string
     password: string
-    env: Env[]
-    id?: string
+    env: Env | undefined
+    userId: string
+    subAccount: subAccount[]
+    defaultSubAccount?: subAccount
 }

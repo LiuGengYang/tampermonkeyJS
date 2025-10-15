@@ -72,3 +72,21 @@
     /* 确保我们的 UnoCSS 类优先级更高 */
     isolation: auto;
 }
+
+/* 提升 Naive UI 弹层（Popselect/Popover/Dropdown）层级，防止被页面覆盖 */
+/* 注意：这些弹层 Teleport 到 body，需用全局选择器提升层级 */
+:where(
+        .n-popover,
+        .n-popselect,
+        .n-popselect-menu,
+        .n-dropdown,
+        .n-select-menu,
+        .n-cascader-menu,
+        .n-date-panel,
+        .n-time-picker-panel,
+        .v-binder-follower-container,
+        .v-binder-follower-content
+    ) {
+    z-index: 2147483647 !important; /* max 32-bit */
+    pointer-events: auto !important;
+}

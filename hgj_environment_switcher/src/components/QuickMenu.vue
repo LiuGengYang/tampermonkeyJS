@@ -12,28 +12,50 @@
             <div
                 class="quick-switch__item"
                 v-for="item in accounts"
-                :key="item.id"
+                :key="item.userId"
                 @click.stop="fillAccount(item)"
             >
                 <div class="item-top">
                     <div class="account-name">
-                        <div>{{ item.name }}</div>
+                        <div
+                            class="account-name__text"
+                            :title="item.defaultSubAccount!.enterpriseName"
+                        >
+                            <n-icon
+                                v-if="defaultAccount(item.userId as string)"
+                                :component="CheckmarkCircle"
+                                color="#4FA063"
+                                :size="16"
+                                style="margin-right: 4px"
+                            />
+                            <span>{{
+                                item.defaultSubAccount!.enterpriseName
+                            }}</span>
+                        </div>
                         <div style="font-size: 10px; margin-top: 10px">
                             {{ item.account }}
                         </div>
                     </div>
                     <div class="options">
-                        <n-tag
-                            v-if="defaultAccount(item.id as string)"
-                            round
-                            :bordered="false"
-                            type="success"
+                        <n-popselect
+                            :default-value="item.defaultSubAccount!.enterpriseId"
+                            :options="
+                                item.subAccount?.map(i => ({
+                                    label: i.enterpriseName,
+                                    value: i.enterpriseName
+                                }))
+                            "
+                            trigger="hover"
+                            :on-update:value="value => fillAccount(item, value)"
                         >
-                            <span class="env"> 默认 </span>
-                            <template #icon>
-                                <n-icon :component="CheckmarkCircle" />
-                            </template>
-                        </n-tag>
+                            <div class="switch-sub-account" @click.stop>
+                                <n-icon
+                                    :component="SwapHorizontalOutline"
+                                    :size="10"
+                                />
+                                <span>切换</span>
+                            </div>
+                        </n-popselect>
                         <n-button
                             type="primary"
                             size="small"
@@ -54,13 +76,18 @@
 </template>
 
 <script lang="ts" setup>
-import { NTag, NIcon, NEmpty, NButton } from 'naive-ui'
+import { NIcon, NEmpty, NButton, NPopselect } from 'naive-ui'
 import { useSwitcherStore } from '../store/switcher'
-import { CheckmarkCircle } from '@vicons/ionicons5'
-import { globalEmitter, fillInAccount, clickLoginBtn } from '../utils/utils'
+import { CheckmarkCircle, SwapHorizontalOutline } from '@vicons/ionicons5'
+import {
+    globalEmitter,
+    fillInAccount,
+    clickLoginBtn,
+    chooseSubAccount
+} from '../utils/utils'
 import dataStorage from '../lib/dataStorage'
 import { clearHGJCookie, logOut, processUrl } from '../utils/utils'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { Account, Env } from '../types'
 import { GM_openInTab, GM_setClipboard } from '$'
 import { createDiscreteApi } from 'naive-ui'
@@ -85,17 +112,24 @@ const accounts = computed(() => {
     }
 })
 
+const defaultAccountName = ref<string[]>([])
+
+accounts.value.forEach(item =>
+    defaultAccountName.value.push(item.defaultSubAccount!.enterpriseName)
+)
+
 const defaultAccount = computed(() => {
     return (id: string) => {
         return switcherStore.defaultAccount[props.env] === id
     }
 })
 
-const fillAccount = (account: Account) => {
+const fillAccount = (account: Account, sessionSubAccount?: string) => {
     if (switcherStore.currentEnv === props.env) {
         dataStorage.sessionSet('session_account', {
             account: account.account,
-            password: account.password
+            password: account.password,
+            defaultSubAccount: sessionSubAccount || account.defaultSubAccount
         })
         if (!window.location.pathname.includes('login')) {
             clearHGJCookie()
@@ -103,17 +137,21 @@ const fillAccount = (account: Account) => {
         } else {
             fillInAccount(account)
             clickLoginBtn()
+            setTimeout(() => {
+                chooseSubAccount(
+                    sessionSubAccount ||
+                        account.defaultSubAccount!.enterpriseName
+                )
+            }, 1000)
         }
     } else {
-        let url = `${processUrl(props.env)}?id=${account.id}`
-        if (switcherStore.settings.newTab) {
-            GM_openInTab(url, {
-                active: true,
-                incognito: switcherStore.settings.incognito
-            })
-        } else {
-            window.open(url)
-        }
+        let url = `${processUrl(props.env)}?id=${account.userId}?subAccount=${
+            sessionSubAccount || account.defaultSubAccount!.enterpriseName
+        }`
+        GM_openInTab(url, {
+            active: true,
+            incognito: switcherStore.settings.incognito
+        })
     }
 }
 
@@ -191,10 +229,6 @@ const copyToClipboard = (account: Account) => {
 .account-name {
     font-weight: 600;
     color: #0f172a;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 75px;
     font-size: 12px;
     display: flex;
     flex-direction: column;
@@ -262,5 +296,51 @@ const copyToClipboard = (account: Account) => {
     width: 50px;
     height: 20px;
     margin-top: 10px;
+}
+.subAccount {
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.subAccount:hover {
+    background-color: #f0fdf4;
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.1);
+    transform: translateY(-1px);
+}
+
+.account-name__text {
+    display: flex;
+    align-items: center;
+}
+.account-name__text span {
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.switch-sub-account {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 6px;
+    font-size: 10px;
+    color: #6b7280;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 4px;
+}
+
+.switch-sub-account:hover {
+    background: #f0fdf4;
+    border-color: #4fa063;
+    color: #4fa063;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(79, 160, 99, 0.1);
 }
 </style>

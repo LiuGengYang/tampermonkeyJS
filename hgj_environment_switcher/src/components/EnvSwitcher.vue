@@ -29,6 +29,7 @@ const clickTimeout = 150 // 150毫秒内判断为点击
 let animationId: number | null = null
 let pendingX: number | null = null
 let pendingY: number | null = null
+let moveAnimationId: number | null = null
 
 onMounted(() => {
     pos.value = { x: window.innerWidth - 80, y: window.innerHeight - 80 }
@@ -51,6 +52,8 @@ onMounted(() => {
         optionsShow.value = false
         ;(accountManage.value as any).openDialog()
     })
+    keepVisible()
+    resizeListeners()
 })
 
 onUnmounted(() => {
@@ -80,8 +83,6 @@ const updatePosition = () => {
 
 const dragStart = (e: MouseEvent) => {
     e.preventDefault()
-    console.log('mousedown')
-
     isMouseDown = true
     hasMoved = false
     ;(switcher.value as HTMLElement).style.transition = 'none'
@@ -178,6 +179,93 @@ const showDialog = () => {
     optionsShow.value = false
     ;(accountManage.value as any).openDialog()
 }
+
+const keepVisible = () => {
+    if (!envSwitcherBtn.value) return
+    const rect = envSwitcherBtn.value.getBoundingClientRect()
+
+    // 计算目标 pos（基于当前 pos 调整），使按钮处于可见区域
+    let targetX = pos.value.x
+    let targetY = pos.value.y
+
+    // 如果按钮超出左侧或上侧，则往相反方向移动
+    const padding = 8
+    if (rect.left < 0) {
+        // 向右移动足够的像素使其可见
+        targetX = pos.value.x + -rect.left + padding
+    }
+    if (rect.top < 0) {
+        targetY = pos.value.y + -rect.top + padding
+    }
+
+    // 如果按钮超出右侧或底部，则向左/向上移动
+    if (rect.right > window.innerWidth) {
+        targetX = pos.value.x - (rect.right - window.innerWidth) - padding
+    }
+    if (rect.bottom > window.innerHeight) {
+        targetY = pos.value.y - (rect.bottom - window.innerHeight) - padding
+    }
+
+    // 边界约束
+    const boundedX = Math.max(0, Math.min(targetX, maxX))
+    const boundedY = Math.max(0, Math.min(targetY, maxY))
+
+    // 如果位置已经在可见范围内，不做任何事
+    if (
+        Math.round(boundedX) === Math.round(pos.value.x) &&
+        Math.round(boundedY) === Math.round(pos.value.y)
+    ) {
+        return
+    }
+
+    // 平滑移动到目标位置
+    const duration = 200
+    const startX = pos.value.x
+    const startY = pos.value.y
+    const startTime = performance.now()
+
+    if (moveAnimationId) {
+        cancelAnimationFrame(moveAnimationId)
+        moveAnimationId = null
+    }
+
+    const step = (now: number) => {
+        const t = Math.min(1, (now - startTime) / duration)
+        // easeOutCubic
+        const ease = 1 - Math.pow(1 - t, 3)
+        pos.value.x = startX + (boundedX - startX) * ease
+        pos.value.y = startY + (boundedY - startY) * ease
+        if (t < 1) {
+            moveAnimationId = requestAnimationFrame(step)
+        } else {
+            moveAnimationId = null
+            // 最终写入 store
+            switcherStore.setPosition({
+                x: Math.round(boundedX),
+                y: Math.round(boundedY)
+            })
+        }
+    }
+
+    moveAnimationId = requestAnimationFrame(step)
+}
+
+const resizeListeners = () => {
+    let lastDevicePixelRatio = window.devicePixelRatio
+    window.addEventListener('resize', function () {
+        const newDevicePixelRatio = window.devicePixelRatio
+        if (lastDevicePixelRatio !== newDevicePixelRatio) {
+            lastDevicePixelRatio = newDevicePixelRatio
+            maxX =
+                window.innerWidth -
+                (envSwitcherBtn.value as HTMLElement)?.offsetWidth
+            maxY =
+                window.innerHeight -
+                (envSwitcherBtn.value as HTMLElement)?.offsetHeight
+            keepVisible()
+        }
+    })
+}
 </script>
 
 <template>
@@ -263,7 +351,7 @@ const showDialog = () => {
     color: white;
     font-weight: bold;
     cursor: move;
-    z-index: 99999;
+    z-index: 99999999;
     user-select: none;
 }
 

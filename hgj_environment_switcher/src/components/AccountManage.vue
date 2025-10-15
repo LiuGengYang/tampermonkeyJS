@@ -5,9 +5,11 @@
         :show-icon="false"
         v-model:show="dialogVisible"
         style="min-width: 700px"
+        :z-index="2004"
     >
         <div class="modal-content">
             <n-tabs
+                v-model:value="tabActive"
                 type="line"
                 size="large"
                 animated
@@ -16,7 +18,13 @@
             >
                 <n-tab-pane name="账号列表">
                     <div class="tab-content">
-                        <AccountForm />
+                        <AccountForm
+                            @switch-tab="
+                                tabName => {
+                                    tabActive = tabName
+                                }
+                            "
+                        />
                         <AccountTable />
                     </div>
                 </n-tab-pane>
@@ -32,13 +40,16 @@
 
 <script lang="ts" setup>
 import { NModal, NTabs, NTabPane } from 'naive-ui'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import AccountForm from './AccountForm.vue'
 import AccountTable from './AccountTable.vue'
 import EnvironmentForm from './EnvironmentForm.vue'
 import { globalEmitter } from '../utils/utils'
 
 const dialogVisible = ref(false)
+const tabActive = ref('账号列表')
+
+watch(dialogVisible, val => !val && (tabActive.value = '账号列表'))
 
 onMounted(() => {
     globalEmitter.on('closeManage', () => {

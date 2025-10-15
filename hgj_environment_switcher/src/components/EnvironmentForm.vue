@@ -36,20 +36,23 @@
                 :options="prodAccountOptions"
             />
         </n-form-item>
-        <n-form-item path="setting.newTab" label="是否新标签打开">
-            <n-switch v-model:value="envModel.setting.newTab">
-                <template #checked> 新标签页打开 </template>
-                <template #unchecked> 当前标签页打开 </template>
-            </n-switch>
+        <n-form-item path="setting.pubkey" label="公钥">
+            <n-input
+                v-model:value="envModel.setting.pubkey"
+                type="textarea"
+                placeholder="请输入公钥，用于加密账号密码"
+                :rows="4"
+                @keydown.enter.prevent
+            />
         </n-form-item>
         <n-form-item path="setting.incognito" label="是否隐私窗口打开新标签页">
-            <n-switch
-                v-model:value="envModel.setting.incognito"
-                :disabled="!envModel.setting.newTab"
-            >
+            <n-switch v-model:value="envModel.setting.incognito">
                 <template #checked> 隐私窗口打开 </template>
                 <template #unchecked> 非隐私窗口打开 </template>
             </n-switch>
+        </n-form-item>
+        <n-form-item path="setting.debug" label="是否调试模式">
+            <n-switch v-model:value="envModel.setting.debug"> </n-switch>
         </n-form-item>
         <n-flex justify="center">
             <n-button style="width: 250px" type="primary" @click="handleSubmit"
@@ -60,7 +63,15 @@
 </template>
 
 <script lang="ts" setup>
-import { NForm, NFormItem, NSelect, NButton, NSwitch, NFlex } from 'naive-ui'
+import {
+    NForm,
+    NFormItem,
+    NSelect,
+    NButton,
+    NSwitch,
+    NFlex,
+    NInput
+} from 'naive-ui'
 import { computed, onMounted, ref } from 'vue'
 import { omit } from 'lodash'
 import { Account } from '../types'
@@ -83,7 +94,8 @@ const envModel = ref<EnvModel>({
     prod: '',
     setting: {
         incognito: false,
-        newTab: false
+        debug: false,
+        pubkey: ''
     }
 })
 
@@ -95,22 +107,28 @@ onMounted(() => {
 })
 const devAccountOptions = computed(() =>
     switcherStore.devAccounts.map((account: Account) => ({
-        label: `${account.name} (${account.account})`,
-        value: account.id
+        label: `${account.defaultSubAccount!.enterpriseName} (${
+            account.account
+        })`,
+        value: account.userId
     }))
 )
 
 const betaAccountOptions = computed(() =>
     switcherStore.betaAccounts.map((account: Account) => ({
-        label: `${account.name} (${account.account})`,
-        value: account.id
+        label: `${account.defaultSubAccount!.enterpriseName} (${
+            account.account
+        })`,
+        value: account.userId
     }))
 )
 
 const prodAccountOptions = computed(() =>
     switcherStore.prodAccounts.map((account: Account) => ({
-        label: `${account.name} (${account.account})`,
-        value: account.id
+        label: `${account.defaultSubAccount!.enterpriseName} (${
+            account.account
+        })`,
+        value: account.userId
     }))
 )
 

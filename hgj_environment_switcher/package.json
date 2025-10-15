@@ -1,7 +1,7 @@
 {
     "name": "hgj_environment_switcher",
     "private": true,
-    "version": "1.0.0",
+    "version": "2.0.0",
     "type": "module",
     "scripts": {
         "dev": "vite",
@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "@types/lodash": "^4.17.20",
+        "jsencrypt": "^3.5.4",
         "lodash": "^4.17.21",
         "mitt": "^3.0.1",
         "pinia": "^3.0.3",

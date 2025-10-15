@@ -14,15 +14,15 @@ export const useSwitcherStore = defineStore('switcher', () => {
     const accounts = ref<Account[]>([])
     // dev环境账号
     const devAccounts = computed(() =>
-        accounts.value.filter(account => account.env.includes('dev'))
+        accounts.value.filter(account => account.env!.includes('dev'))
     )
     // beta环境账号
     const betaAccounts = computed(() =>
-        accounts.value.filter(account => account.env.includes('beta'))
+        accounts.value.filter(account => account.env!.includes('beta'))
     )
     // prod环境账号
     const prodAccounts = computed(() =>
-        accounts.value.filter(account => account.env.includes('prod'))
+        accounts.value.filter(account => account.env!.includes('prod'))
     )
 
     const position = ref<Position | null>(null)
@@ -31,7 +31,8 @@ export const useSwitcherStore = defineStore('switcher', () => {
 
     const settings = ref<Setting>({
         incognito: false,
-        newTab: false
+        debug: false,
+        pubkey: ''
     })
 
     const currentEnv = ref<Env>()
@@ -62,7 +63,7 @@ export const useSwitcherStore = defineStore('switcher', () => {
     }
 
     const deleteAccountById = (id: string) => {
-        const index = accounts.value.findIndex(account => account.id === id)
+        const index = accounts.value.findIndex(account => account.userId === id)
         if (index !== -1) {
             defaultAccount.value = forEach(
                 defaultAccount.value,
@@ -85,7 +86,7 @@ export const useSwitcherStore = defineStore('switcher', () => {
     }
 
     const upDataAccountById = (id: string, account: Required<Account>) => {
-        const index = accounts.value.findIndex(account => account.id === id)
+        const index = accounts.value.findIndex(account => account.userId === id)
         if (index !== -1) {
             accounts.value[index] = account
             dataStorage.setSync(dataStorage.STORAGE_KEY, accounts.value)
@@ -94,7 +95,7 @@ export const useSwitcherStore = defineStore('switcher', () => {
                 (value, key) => {
                     if (
                         value === id &&
-                        !accounts.value[index].env.includes(key as Env)
+                        !accounts.value[index].env!.includes(key as Env)
                     ) {
                         defaultAccount.value[key as Env] = undefined
                     }
@@ -157,7 +158,8 @@ export const useSwitcherStore = defineStore('switcher', () => {
         ) as DefaultAccount
         settings.value = dataStorage.getSync(dataStorage.SETTINGS_KEY, {
             incognito: false,
-            newTab: false
+            debug: false,
+            pubkey: ''
         }) as Setting
         currentEnv.value = getCurrentEnvironment() as Env
     })()

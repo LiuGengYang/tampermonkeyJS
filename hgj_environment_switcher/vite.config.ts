@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, ViteDevServer } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import monkey, { cdn } from 'vite-plugin-monkey'
 // https://vitejs.dev/config/
@@ -34,6 +34,36 @@ export default defineConfig(({ mode }) => ({
         include: ['@vicons/ionicons5', 'naive-ui']
     },
     server: {
-        cors: true
+        cors: true,
+        // Add middleware to respond with Access-Control-Allow-Private-Network for PNA preflight
+        middlewareMode: false,
+        configureServer(server: ViteDevServer) {
+            server.middlewares.use((req: any, res: any, next: any) => {
+                // set CORS headers for simple requests
+                res.setHeader('Access-Control-Allow-Origin', '*')
+                res.setHeader(
+                    'Access-Control-Allow-Methods',
+                    'GET,HEAD,PUT,PATCH,POST,DELETE'
+                )
+                res.setHeader(
+                    'Access-Control-Allow-Headers',
+                    'Content-Type, Authorization, X-Requested-With, Accept, Origin'
+                )
+                res.setHeader('Access-Control-Allow-Credentials', 'true')
+                // Important: allow private network requests (PNA)
+                res.setHeader('Access-Control-Allow-Private-Network', 'true')
+
+                if (req.method === 'OPTIONS') {
+                    // respond to preflight
+                    res.statusCode = 204
+                    return res.end()
+                }
+
+                next()
+            })
+        }
+    },
+    build: {
+        minify: true
     }
 }))

@@ -25,7 +25,8 @@ export type DefaultAccount = Record<Env, string | undefined>
 
 export type Setting = {
     incognito: boolean // 同环境下切换账号是否使用隐私窗口打开
-    newTab: boolean // 是否新标签打开
+    debug: boolean // 是否新标签打开
+    pubkey: string // 公钥
 }
 
 // 定义每个存储键对应的数据类型
