@@ -3,9 +3,6 @@ import mitt, { type Emitter } from 'mitt'
 import { Env } from '../types'
 import JSEncrypt from 'jsencrypt'
 import { useSwitcherStore } from '../store/switcher'
-import { createDiscreteApi } from 'naive-ui'
-
-const { message } = createDiscreteApi(['message'])
 
 export function isInIframe() {
     try {
