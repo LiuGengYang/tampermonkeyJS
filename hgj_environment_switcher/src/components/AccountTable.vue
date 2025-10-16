@@ -2,7 +2,7 @@
     <div class="account-table">
         <n-data-table
             remote
-            :max-height="170"
+            :max-height="240"
             :columns="columns"
             :data="switcherStore.accounts"
             :paging="false"

@@ -181,7 +181,8 @@ const saveAccount = debounce(async () => {
                             password: encrypt(accountModel.value.password),
                             rememberMe: false,
                             countryCode: '86'
-                        })
+                        }),
+                        accountModel.value.env
                     )
                     data = res.loginResultResponse
                 } catch (err) {
@@ -190,6 +191,14 @@ const saveAccount = debounce(async () => {
                     message.error(errorMessage)
                 }
                 if (data) {
+                    let hasAccount = switcherStore.accounts.find(
+                        item => item.userId === data.userId
+                    )
+                    if (hasAccount) {
+                        message.warning('该账号已存在，请勿重复添加')
+                        loading.value = false
+                        return
+                    }
                     subAccounts.value = data.enterpriseInfos
                     accountModel.value.userId = data.userId
                     openSubAccountDialog()
@@ -261,6 +270,11 @@ const openSubAccountDialog = () => {
                 message.success('账号新增成功')
             loading.value = false
             clear(true)
+        },
+        onClose: () => {
+            subAccounts.value = []
+            accountModel.value.userId = ''
+            loading.value = false
         }
     })
 }

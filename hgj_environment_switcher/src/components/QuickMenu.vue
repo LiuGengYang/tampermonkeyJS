@@ -132,7 +132,8 @@ const fillAccount = (account: Account, sessionSubAccount?: string) => {
         dataStorage.sessionSet('session_account', {
             account: account.account,
             password: account.password,
-            defaultSubAccount: sessionSubAccount || account.defaultSubAccount
+            defaultSubAccount:
+                sessionSubAccount || account.defaultSubAccount?.enterpriseName
         })
         if (!window.location.pathname.includes('login')) {
             clearHGJCookie()

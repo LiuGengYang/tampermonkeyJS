@@ -462,16 +462,18 @@ enum urlHead {
 export function fetch<T>(
     method: RequestMethod,
     url: string,
-    data?: BodyInit | undefined
+    data?: BodyInit | undefined,
+    env?: Env
 ): Promise<T> {
     return new Promise((resolve, reject) => {
         const switcherStore = useSwitcherStore()
-        const env = switcherStore.currentEnv
+        const currentEnv = switcherStore.currentEnv
+
         GM_xmlhttpRequest({
             fetch: true,
             method: method,
             data: data,
-            url: urlHead[env as Env] + url,
+            url: urlHead[(env as Env) || currentEnv] + url,
             headers: {
                 'Content-Type': 'application/json',
                 appName: 'saas_tenant_pc',
