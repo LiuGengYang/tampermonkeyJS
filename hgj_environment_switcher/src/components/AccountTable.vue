@@ -11,7 +11,7 @@
     </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { NTag, NButton, NSpace, NDataTable, NPopconfirm } from 'naive-ui'
 import { createDiscreteApi } from 'naive-ui'
 import { onMounted, ref, h } from 'vue'
@@ -22,7 +22,6 @@ import { useSwitcherStore } from '../store/switcher'
 const { message } = createDiscreteApi(['message'])
 const switcherStore = useSwitcherStore()
 
-const accounts = ref<Account[]>([])
 const columns = [
     {
         title: '默认子账号',
@@ -105,7 +104,7 @@ const loading = ref(false)
 
 onMounted(async () => {
     loading.value = true
-    accounts.value = switcherStore.accounts
+    switcherStore.accounts
     loading.value = false
 })
 

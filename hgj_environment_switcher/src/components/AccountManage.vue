@@ -38,7 +38,7 @@
     </n-modal>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { NModal, NTabs, NTabPane } from 'naive-ui'
 import { onMounted, ref, watch } from 'vue'
 import AccountForm from './AccountForm.vue'
@@ -54,6 +54,11 @@ watch(dialogVisible, val => !val && (tabActive.value = '账号列表'))
 onMounted(() => {
     globalEmitter.on('closeManage', () => {
         dialogVisible.value = false
+    })
+
+    // 监听全局事件（兼容性方案）
+    window.addEventListener('openAccountManageDialog', () => {
+        dialogVisible.value = true
     })
 })
 

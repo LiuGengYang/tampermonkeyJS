@@ -32,7 +32,8 @@ export const useSwitcherStore = defineStore('switcher', () => {
     const settings = ref<Setting>({
         incognito: false,
         debug: false,
-        pubkey: ''
+        pubkey: '',
+        enableLogs: false  // 添加日志开关
     })
 
     const currentEnv = ref<Env>()

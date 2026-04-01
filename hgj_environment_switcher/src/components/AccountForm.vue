@@ -81,8 +81,8 @@
     </n-spin>
 </template>
 
-<script lang="ts" setup>
-import { computed, onMounted, ref, h, defineEmits } from 'vue'
+<script setup lang="ts">
+import { computed, onMounted, ref, h } from 'vue'
 import { createDiscreteApi } from 'naive-ui'
 import { fetch, encrypt } from '../utils/utils'
 import { debounce } from 'lodash'

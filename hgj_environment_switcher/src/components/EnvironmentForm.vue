@@ -54,6 +54,12 @@
         <n-form-item path="setting.debug" label="是否调试模式">
             <n-switch v-model:value="envModel.setting.debug"> </n-switch>
         </n-form-item>
+        <n-form-item path="setting.enableLogs" label="是否启用日志">
+            <n-switch v-model:value="envModel.setting.enableLogs">
+                <template #checked> 启用日志 </template>
+                <template #unchecked> 关闭日志 </template>
+            </n-switch>
+        </n-form-item>
         <n-flex justify="center">
             <n-popconfirm
                 @positive-click="clearAllData()"
@@ -72,7 +78,7 @@
     </n-form>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import {
     NForm,
     NFormItem,
@@ -106,7 +112,8 @@ const envModel = ref<EnvModel>({
     setting: {
         incognito: false,
         debug: false,
-        pubkey: ''
+        pubkey: '',
+        enableLogs: false
     }
 })
 

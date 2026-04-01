@@ -18,14 +18,14 @@ type ValuesState = Partial<{ [K in StorageKey]: StorageDataMap[K] | null }>
 const values = ref<ValuesState>({})
 function setVal<K extends StorageKey>(key: K, val: StorageDataMap[K] | null) {
     // 通过函数泛型约束，避免索引访问的联合类型冲突
-    ;(values.value as any)[key] = val
+    values.value[key] = val
 }
 const unsubscribes: Array<() => void> = []
 
 const loadAll = async () => {
     for (const k of keys) {
-        const v = await dataStorage.get(k as any)
-        setVal(k, v as any)
+        const v = await dataStorage.get(k as StorageKey)
+        setVal(k, v)
     }
 }
 
@@ -34,7 +34,7 @@ onMounted(async () => {
     for (const k of keys) {
         const off = dataStorage.onKeyChange(k, ({ newValue }) => {
             // 使用新对象触发 Vue 响应式
-            values.value = { ...values.value, [k]: newValue as any }
+            values.value = { ...values.value, [k]: newValue }
             // 轻微高亮提示更新的 key
             addUpdated(k)
             setTimeout(() => removeUpdated(k), 800)

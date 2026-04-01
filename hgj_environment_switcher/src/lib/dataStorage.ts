@@ -27,6 +27,7 @@ export type Setting = {
     incognito: boolean // 同环境下切换账号是否使用隐私窗口打开
     debug: boolean // 是否新标签打开
     pubkey: string // 公钥
+    enableLogs?: boolean // 是否启用日志（可选，默认为false）
 }
 
 // 定义每个存储键对应的数据类型

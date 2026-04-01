@@ -13,8 +13,10 @@ export default defineConfig(({ mode }) => ({
                 match: [
                     'http://localhost:8880/*',
                     'http://localhost:8899/*',
-                    '*://*.hgj.com/*',
-                    '*://*.smartai.hgj.com/*'
+                    '*://*.smartai.hgj.com/*',
+                    '*://*.eyun.hgj.com/*',
+                    '*://*-*.smartai.hgj.com/*',
+                    '*://*-*.eyun.hgj.com/*'
                 ]
             },
             build: {

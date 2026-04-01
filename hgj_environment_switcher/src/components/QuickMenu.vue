@@ -85,7 +85,8 @@ import {
     globalEmitter,
     fillInAccount,
     clickLoginBtn,
-    chooseSubAccount
+    chooseSubAccount,
+    waitForSubAccountSelector
 } from '../utils/utils'
 import dataStorage from '../lib/dataStorage'
 import { clearHGJCookie, logOut, processUrl } from '../utils/utils'
@@ -141,16 +142,22 @@ const fillAccount = (account: Account, sessionSubAccount?: string) => {
         } else {
             fillInAccount(account)
             clickLoginBtn()
-            setTimeout(() => {
-                chooseSubAccount(
-                    sessionSubAccount ||
-                        account.defaultSubAccount!.enterpriseName
-                )
-            }, 1000)
+            // 等待子账号选择界面出现后再选择子账号
+            waitForSubAccountSelector(3000).then(ready => {
+                if (ready) {
+                    setTimeout(() => {
+                        const targetSubAccount =
+                            sessionSubAccount || account.defaultSubAccount?.enterpriseName
+                        if (targetSubAccount) {
+                            chooseSubAccount(targetSubAccount)
+                        }
+                    }, 500)
+                }
+            })
         }
     } else {
         let url = `${processUrl(props.env)}?id=${account.userId}?subAccount=${
-            sessionSubAccount || account.defaultSubAccount!.enterpriseName
+            sessionSubAccount || account.defaultSubAccount?.enterpriseName
         }`
         GM_openInTab(url, {
             active: true,
