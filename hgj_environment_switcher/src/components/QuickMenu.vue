@@ -49,6 +49,12 @@
                             "
                             trigger="hover"
                             :on-update:value="value => fillAccount(item, value)"
+                            :render-label="
+                                option =>
+                                    h(NEllipsis, {
+                                        style: { maxWidth: '200px' }
+                                    }, { default: () => option.label })
+                            "
                         >
                             <div class="switch-sub-account" @click.stop>
                                 <n-icon
@@ -78,7 +84,7 @@
 </template>
 
 <script lang="ts" setup>
-import { NIcon, NEmpty, NButton, NPopselect } from 'naive-ui'
+import { NIcon, NEmpty, NButton, NPopselect, NEllipsis } from 'naive-ui'
 import { useSwitcherStore } from '../store/switcher'
 import { CheckmarkCircle, SwapHorizontalOutline } from '@vicons/ionicons5'
 import {
@@ -90,7 +96,7 @@ import {
 } from '../utils/utils'
 import dataStorage from '../lib/dataStorage'
 import { clearHGJCookie, logOut, processUrl } from '../utils/utils'
-import { computed, ref } from 'vue'
+import { computed, ref, h } from 'vue'
 import { Account, Env } from '../types'
 import { GM_openInTab, GM_setClipboard } from '$'
 import { createDiscreteApi } from 'naive-ui'
